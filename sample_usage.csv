@@ -1,0 +1,41 @@
+date,quantity,notes
+2024-01-01,145,Normal production day
+2024-01-02,162,Increased output
+2024-01-03,138,Reduced shift
+2024-01-04,155,Normal production day
+2024-01-05,170,Weekend overtime
+2024-01-06,148,Normal production day
+2024-01-07,160,Normal production day
+2024-01-08,175,High demand batch
+2024-01-09,152,Normal production day
+2024-01-10,165,Normal production day
+2024-01-11,140,Maintenance downtime
+2024-01-12,158,Normal production day
+2024-01-13,172,Rush order
+2024-01-14,155,Normal production day
+2024-01-15,168,Normal production day
+2024-01-16,145,Weekend
+2024-01-17,160,Normal production day
+2024-01-18,178,High demand
+2024-01-19,155,Normal production day
+2024-01-20,163,Normal production day
+2024-01-21,150,Normal production day
+2024-01-22,170,Increased production
+2024-01-23,158,Normal production day
+2024-01-24,165,Normal production day
+2024-01-25,142,Low demand
+2024-01-26,160,Normal production day
+2024-01-27,175,High demand batch
+2024-01-28,155,Normal production day
+2024-01-29,162,Normal production day
+2024-01-30,168,Normal production day
+2024-02-01,155,Month start
+2024-02-02,172,Increased demand
+2024-02-03,148,Normal production day
+2024-02-04,165,Normal production day
+2024-02-05,178,High production
+2024-02-06,160,Normal production day
+2024-02-07,155,Normal production day
+2024-02-08,170,Rush order
+2024-02-09,145,Reduced output
+2024-02-10,162,Normal production day

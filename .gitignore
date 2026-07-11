@@ -1,0 +1,38 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+
+# Django
+db.sqlite3
+staticfiles/
+
+# Env files - NEVER commit
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Build
+build/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Old Express backend - no longer used
+backend/

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+
+# Virtual environment - NEVER commit
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+.env.local
+
+# ML model files (can be large)
+*.pkl
+*.joblib
+*.h5
+*.model
+saved_models/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

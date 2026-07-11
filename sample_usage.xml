@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<usageData>
+  <entry>
+    <date>2024-01-01</date>
+    <quantity>145</quantity>
+    <notes>Normal production day</notes>
+  </entry>
+  <entry>
+    <date>2024-01-02</date>
+    <quantity>162</quantity>
+    <notes>Increased output</notes>
+  </entry>
+  <entry>
+    <date>2024-01-03</date>
+    <quantity>138</quantity>
+    <notes>Reduced shift</notes>
+  </entry>
+  <entry>
+    <date>2024-01-04</date>
+    <quantity>155</quantity>
+    <notes>Normal production day</notes>
+  </entry>
+  <entry>
+    <date>2024-01-05</date>
+    <quantity>170</quantity>
+    <notes>Weekend overtime</notes>
+  </entry>
+  <entry>
+    <date>2024-01-06</date>
+    <quantity>148</quantity>
+  </entry>
+  <entry>
+    <date>2024-01-07</date>
+    <quantity>160</quantity>
+  </entry>
+  <entry>
+    <date>2024-01-08</date>
+    <quantity>175</quantity>
+    <notes>High demand batch</notes>
+  </entry>
+  <entry>
+    <date>2024-01-09</date>
+    <quantity>152</quantity>
+  </entry>
+  <entry>
+    <date>2024-01-10</date>
+    <quantity>165</quantity>
+  </entry>
+  <entry>
+    <date>2024-01-11</date>
+    <quantity>140</quantity>
+    <notes>Maintenance downtime</notes>
+  </entry>
+  <entry>
+    <date>2024-01-12</date>
+    <quantity>158</quantity>
+  </entry>
+  <entry>
+    <date>2024-01-13</date>
+    <quantity>172</quantity>
+    <notes>Rush order</notes>
+  </entry>
+  <entry>
+    <date>2024-01-14</date>
+    <quantity>155</quantity>
+  </entry>
+  <entry>
+    <date>2024-01-15</date>
+    <quantity>168</quantity>
+  </entry>
+</usageData>
