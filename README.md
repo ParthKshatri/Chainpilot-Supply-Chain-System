@@ -1,284 +1,154 @@
 # ChainPilot — Supply Chain Management System
 
-A full-stack Supply Chain Management System built with **MERN** (MongoDB, Express, React, Node.js), **Python ML** (Prophet / Scikit-learn), and **FastAPI** for ML communication.
+A full-stack Supply Chain Management System built with **React**, **Django REST Framework**, **FastAPI**, and **MongoDB**.
 
 ---
 
-## 🏗️ Architecture
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, Recharts, Tabler Icons |
+| Backend | Django 4.2 + Django REST Framework |
+| Database | MongoDB (via PyMongo) |
+| ML Service | FastAPI + SARIMA, XGBoost, Holt-Winters, Linear Regression |
+| Auth | JWT (djangorestframework-simplejwt) |
+
+---
+
+## Features
+
+- **Products** — Add products with a full bill of materials
+- **Inventory** — Track stock levels, storage capacity and daily usage per material
+- **Usage Logging** — Log daily usage manually or upload CSV/XML files
+- **ML Predictions** — Multi-model pipeline (SARIMA, XGBoost, Holt-Winters, Linear) with weighted ensemble forecasting
+- **Model Comparison** — See MAPE, MAE, RMSE, confidence scores for every model side by side
+- **Calendar** — Visual resupply schedule with auto-generated ML events plus manual event creation
+- **Multi-user** — Each user has isolated data, JWT-secured endpoints
+
+---
+
+## Project Structure
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      React Frontend                      │
-│         (Dashboard / Products / Inventory /             │
-│          Predictions / Calendar)                        │
-└──────────────────┬──────────────────────────────────────┘
-                   │ REST API
-┌──────────────────▼──────────────────────────────────────┐
-│               Node.js / Express Backend                  │
-│   Auth · Products · Materials · Usage · Predictions     │
-│                   Calendar Events                        │
-└──────────┬────────────────────────┬─────────────────────┘
-           │ Mongoose               │ HTTP (node-fetch)
-┌──────────▼──────────┐  ┌─────────▼──────────────────────┐
-│      MongoDB        │  │     FastAPI ML Service          │
-│  (multi-user data)  │  │  Prophet + Sklearn forecasting  │
-└─────────────────────┘  └────────────────────────────────┘
+supply-chain/
+├── django-backend/          # Django + DRF API (port 8001)
+│   ├── config/              # Settings, URLs, WSGI
+│   └── scm/
+│       ├── db.py            # PyMongo connection helper
+│       ├── authentication.py# Custom JWT auth for MongoDB users
+│       ├── views/           # Auth, Products, Materials, Usage, Predictions, Calendar
+│       └── urls/            # URL patterns per feature
+│
+├── ml-service/              # FastAPI ML service (port 8000)
+│   ├── pipeline.py          # Multi-model comparison pipeline
+│   ├── models/              # SARIMA, XGBoost, Holt-Winters, Linear
+│   └── routers/             # /predict endpoint
+│
+├── frontend/                # React app (port 3000)
+│   └── src/
+│       ├── pages/           # Dashboard, Products, Inventory, Predictions, Calendar
+│       ├── context/         # Auth context
+│       └── utils/api.js     # Axios API client
+│
+├── sample_usage.csv         # Sample data for testing predictions
+├── sample_usage.xml         # Sample data (XML format)
+└── docker-compose.yml       # Docker setup (optional)
 ```
 
 ---
 
-## 🚀 Quick Start (Docker — Recommended)
+## Local Setup (Manual)
 
 ### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- Python 3.12
+- Node.js 20
+- MongoDB (running locally on port 27017)
 
-### 1. Clone and configure
+### Terminal 1 — MongoDB
 ```bash
-git clone <repo-url>
-cd supply-chain
-cp backend/.env.example backend/.env    # Edit JWT_SECRET
-cp frontend/.env.example frontend/.env
+net start MongoDB
 ```
 
-### 2. Start everything
+### Terminal 2 — Django Backend
 ```bash
-docker-compose up --build
+cd django-backend
+python -m venv venv
+venv\Scripts\activate        # Windows
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 8001
 ```
 
-### 3. Open the app
-| Service    | URL                        |
-|------------|----------------------------|
-| Frontend   | http://localhost:3000      |
-| Backend    | http://localhost:5000      |
-| ML Service | http://localhost:8000      |
-| MongoDB    | localhost:27017            |
-
----
-
-## 🛠️ Manual Setup (Without Docker)
-
-### MongoDB
-Install MongoDB locally or use [MongoDB Atlas](https://www.mongodb.com/atlas).
-
-### Backend (Node.js)
-```bash
-cd backend
-npm install
-# Edit .env — set MONGO_URI, JWT_SECRET, ML_SERVICE_URL
-npm run dev        # Runs on :5000
-```
-
-### ML Service (Python / FastAPI)
+### Terminal 3 — ML Service
 ```bash
 cd ml-service
-python -m venv venv
-source venv/bin/activate       # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-### Frontend (React)
+### Terminal 4 — Frontend
 ```bash
 cd frontend
 npm install
-# Edit .env — set REACT_APP_API_URL
-npm start          # Runs on :3000
+npm start
 ```
+
+Open **http://localhost:3000**
 
 ---
 
-## 📦 Features
+## Environment Variables
 
-### 1. Products
-- Add products with **bill of materials** (each material with qty-per-unit and unit)
-- Materials are **auto-created** in inventory when a product is added
-- Edit / delete products
+Create a `.env` file in `django-backend/`:
 
-### 2. Inventory Management
-- View all materials from all products in one place
-- Update **current stock**, **total storage capacity**, and **daily usage** per material
-- Visual stock bar with color-coded status (Critical / Low / Good)
-- Days-until-stockout calculator
-
-### 3. Daily Usage Logging
-- Log usage per material per day manually
-- Duplicate-safe: re-logging the same day replaces the entry
-- View recent entry history per material
-
-### 4. CSV / XML Upload
-- Upload historical usage data via `📁` button on any material
-- Supported CSV format: `date,quantity` columns
-- Supported XML format: `<entry><date>...<quantity>...` structure
-- Old uploaded data is **automatically deleted and replaced** on each upload
-- Triggers ML prediction refresh
-
-### 5. ML Predictions (FastAPI + Prophet)
-- **Prophet** (Facebook's time-series model) as primary predictor
-- **Polynomial regression** (sklearn) as fallback
-- Outputs:
-  - Predicted daily usage
-  - Estimated stockout date
-  - Recommended resupply date (accounting for lead time)
-  - Recommended order quantity
-  - 90-day stock forecast chart
-  - Confidence score and trend (increasing / decreasing / stable / volatile)
-- Predictions are **deleted and re-generated** whenever new usage data is added
-- Auto-creates **calendar event** for each resupply date
-
-### 6. Calendar
-- Monthly calendar view
-- Event types: Resupply 🚚, Meeting 🤝, Product Launch 🚀, Maintenance 🔧, Custom 📌
-- Add events by clicking any day
-- Color picker per event
-- Resupply events auto-populated from ML predictions
-- Upcoming events sidebar
-- Priority levels (High / Medium / Low)
-
-### 7. Multi-User
-- JWT authentication (register / login)
-- All data is **user-scoped** — every query filters by `userId`
-- Rate limiting (200 req/15min per IP)
-- Passwords hashed with bcrypt
-
----
-
-## 📁 Project Structure
-
-```
-supply-chain/
-├── docker-compose.yml
-├── sample_usage.csv          ← Test CSV for upload
-├── sample_usage.xml          ← Test XML for upload
-│
-├── backend/                  ← Node.js / Express
-│   ├── server.js
-│   ├── models/
-│   │   ├── User.js
-│   │   ├── Product.js
-│   │   ├── Material.js
-│   │   ├── UsageEntry.js
-│   │   ├── Prediction.js
-│   │   └── CalendarEvent.js
-│   ├── routes/
-│   │   ├── auth.js
-│   │   ├── products.js
-│   │   ├── materials.js
-│   │   ├── usage.js
-│   │   ├── predictions.js
-│   │   └── calendar.js
-│   └── middleware/
-│       └── auth.js
-│
-├── ml-service/               ← Python / FastAPI
-│   ├── main.py
-│   ├── requirements.txt
-│   └── routers/
-│       └── predict.py        ← Prophet + sklearn models
-│
-└── frontend/                 ← React
-    └── src/
-        ├── App.js
-        ├── context/AuthContext.js
-        ├── utils/api.js
-        ├── pages/
-        │   ├── LoginPage.js
-        │   ├── RegisterPage.js
-        │   ├── DashboardPage.js
-        │   ├── ProductsPage.js
-        │   ├── InventoryPage.js
-        │   ├── PredictionsPage.js
-        │   └── CalendarPage.js
-        └── components/Layout/Layout.js
-```
-
----
-
-## 🔌 API Reference
-
-### Auth
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/me` | Get current user |
-
-### Products
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/products` | List all products |
-| POST | `/api/products` | Create product + auto-add materials |
-| PUT | `/api/products/:id` | Update product |
-| DELETE | `/api/products/:id` | Soft delete |
-
-### Materials
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/materials` | List all materials |
-| PATCH | `/api/materials/:id/stock` | Update stock levels |
-
-### Usage
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/usage` | Log daily usage |
-| POST | `/api/usage/upload/:materialId` | Upload CSV/XML |
-| GET | `/api/usage/:materialId` | Get usage history |
-
-### Predictions
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/predictions` | All predictions |
-| POST | `/api/predictions/generate/:materialId` | Run ML prediction |
-
-### Calendar
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/calendar?year=&month=` | Events by month |
-| POST | `/api/calendar` | Create event |
-| PUT | `/api/calendar/:id` | Update event |
-| DELETE | `/api/calendar/:id` | Delete event |
-
-### ML Service (FastAPI)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/predict` | Generate prediction from usage data |
-| GET | `/health` | Health check |
-
----
-
-## 🔒 Environment Variables
-
-### Backend `.env`
-```
-MONGO_URI=mongodb://...
-JWT_SECRET=change_this_secret
-JWT_EXPIRE=7d
+```env
+SECRET_KEY=your-secret-key-here
+DEBUG=True
+MONGO_URI=mongodb://localhost:27017/supply_chain
+MONGO_DB_NAME=supply_chain
 ML_SERVICE_URL=http://localhost:8000
-PORT=5000
+CORS_ALLOWED_ORIGINS=http://localhost:3000
 ```
 
-### Frontend `.env`
-```
-REACT_APP_API_URL=http://localhost:5000/api
+Create a `.env` file in `frontend/`:
+
+```env
+REACT_APP_API_URL=http://localhost:8001/api
 REACT_APP_ML_URL=http://localhost:8000
 ```
 
 ---
 
-## 🧪 Testing with Sample Data
+## ML Pipeline
 
-1. Register an account
-2. Create a product (e.g. "Widget A") with materials (e.g. "Steel Sheet" x 2 kg)
-3. Go to **Inventory**, click 📊 to set stock levels
-4. Click 📁 to upload `sample_usage.csv`
-5. Go to **Predictions**, click **Generate Prediction**
-6. Check **Calendar** — resupply date appears automatically
+The prediction system runs 4 models in parallel and selects the best by lowest MAPE:
+
+| Model | Min Data Points | Best For |
+|---|---|---|
+| Linear Baseline | 3 | Always available, guaranteed fallback |
+| Holt-Winters | 10 | Smooth trends with weekly seasonality |
+| SARIMA | 14 | Auto-tuned seasonal patterns |
+| XGBoost | 20 | Non-linear patterns, lag features |
+
+When 2+ models succeed, a **weighted ensemble** blends the top 3 by inverse-MAPE weights for higher accuracy.
 
 ---
 
-## 🚀 Production Notes
+## How to Generate Predictions
 
-- Replace `JWT_SECRET` with a strong random string
-- Set `MONGO_URI` to a secured MongoDB Atlas cluster
-- Use HTTPS with a reverse proxy (Nginx/Caddy)
-- Set `FRONTEND_URL` in backend for CORS
-- Scale ML service independently (it's stateless)
+1. Add a product with materials on the **Products** page
+2. Go to **Inventory** → upload `sample_usage.csv` on any material
+3. Go to **Predictions** → click **Generate Prediction**
+4. View the 90-day stock forecast chart and model comparison table
+5. Resupply date auto-appears on the **Calendar**
+
+---
+
+## Docker Setup (Optional)
+
+```bash
+docker compose up --build
+```
+
+Services start on ports 3000 (frontend), 8001 (backend), 8000 (ML), 27017 (MongoDB).
